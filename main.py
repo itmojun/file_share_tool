@@ -41,29 +41,39 @@ def upload_file():
             return redirect(request.url)
             
     html_template = '''<!DOCTYPE html>
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-        <title>文件分享工具 - IT魔君</title>
-    </head>
-    <body>
-        <h1>上传文件</h1>
-        <form method="post" enctype="multipart/form-data">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>文件分享工具 - IT魔君</title>
+</head>
+<body>
+    <h1>上传文件</h1>
+    <form method="post" enctype="multipart/form-data">
         <input type="file" name="file">
         <input type="submit" value="上传">
-        </form>
-        <hr>
-        {uploaded_file_list}
-    </body>
-    </html>
-    '''
+    </form>
+    <hr>
+
+    %s
+
+    <script>
+        document.forms[0].onsubmit = function() {
+            var file_path = document.getElementsByName("file")[0].value;
+            if (! file_path) {
+                alert("请选择要上传的文件！");
+                return false;
+            }
+        };
+    </script> 
+</body>
+</html>'''
 
     file_names = os.listdir("./uploaded_files")
     uploaded_file_list = ""
     for f in file_names:
         uploaded_file_list += '<a href="/download/%s">%s</a><br />' % (f, f)
 
-    return html_template.format(uploaded_file_list=uploaded_file_list)
+    return (html_template % uploaded_file_list)
 
 @app.route('/download/<filename>')
 def download_file(filename):
